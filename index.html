@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Rating</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+            background-color: #151D4F;
+        }
+
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #1F1F1F;
+            width: 500px;
+            height: 500px;
+            max-width: 700px;
+            max-height: 700px;
+            border-radius: 10px;
+        }
+
+        .centered-text {
+            text-align: center;
+            width: 100%;
+            margin-top: 40px;
+            color: #fff;
+        }
+
+        .centered-image {
+            display: block;
+            margin-top: 20px;
+            max-width: 90%;
+            /* Adjust width as needed */
+            height: auto;
+        }
+
+        .star-rating {
+            font-size: 50px;
+            color: gray;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .star {
+            cursor: pointer;
+        }
+
+        .star.rated {
+            color: #fc0;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            /* Smooth rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow */
+            width: 400px;
+            /* Width of the modal */
+            max-width: 100%;
+            /* Ensuring responsiveness */
+            box-sizing: border-box;
+            /* Border and padding included in width */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 500px;
+            text-align: center;
+        }
+
+        .close {
+            color: #ccc;
+            font-size: 50px;
+            cursor: pointer;
+            position: absolute;
+            right: 25px;
+            top: 20px;
+        }
+
+        p {
+            color: gray;
+        }
+
+        input[type=email],
+        textarea {
+            width: calc(100% - 20px);
+            padding: 10px 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            /* Light border */
+            border-radius: 8px;
+            /* Rounded edges on input fields */
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            /* Inner shadow for depth */
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        button {
+            width: calc(100% - 20px);
+            padding: 10px 10px;
+            background-color: #ff7f42;
+            /* Bright blue color for the button */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            /* Rounded edges on buttons */
+            margin-top: 20px;
+            font-weight: bold;
+            /* Bold font for the button */
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* Button shadow for depth */
+        }
+
+        thankyou {
+            text-align: center;
+            width: 100%;
+            margin-top: 40px;
+            color: #fff;
+        }
+
+        button:hover {
+            background-color: #151D4F;
+            /* A slightly darker blue on hover */
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.15);
+            /* Deeper shadow on hover */
+        }
+    </style>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+    </script>
+    <script type="text/javascript">
+        (function () {
+            emailjs.init({
+                publicKey: "bsL4x2qvL2evEM5rt",
+            });
+        })();
+    </script>
+
+    <!-- Pixel Code for https://analytics.divtodiv.com/ -->
+    <script defer src="https://analytics.divtodiv.com/pixel/Sgtw8H7Uo8bcNHHU"></script>
+    <!-- END Pixel Code -->
+
+</head>
+
+<body>
+    <div class="wrapper">
+        <img src="https://staycooltinting.ca/wp-content/themes/thegem-elementor/assets/img/fav-index.webp"
+            alt="STAY COOL TINTING Logo" class="centered-image" width="200" height="auto">
+        <!-- Height will scale automatically -->
+
+        <h1 id="h1" class="centered-text">We Value Your Feedback!</h1>
+
+        <div class="star-rating" id="star-rating">
+            <span class="star" data-value="1">&#9734;</span>
+            <span class="star" data-value="2">&#9734;</span>
+            <span class="star" data-value="3">&#9734;</span>
+            <span class="star" data-value="4">&#9734;</span>
+            <span class="star" data-value="5">&#9734;</span>
+        </div>
+
+        <img id="google" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png"
+            alt="Google Logo" class="centered-image" width="75" height="auto">
+        <p>Posting publicly across Google
+
+            reset stars on closing pop!
+
+        </p>
+
+    </div>
+    <!-- Height will scale automatically -->
+    <br>
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <input type="email" id="email" placeholder="Your email" required>
+            <textarea id="message" placeholder="Leave a review" required></textarea>
+            <button id="submit-btn">Submit Review</button>
+        </div>
+    </div>
+
+    <div id="message-container" style="color: white;"></div>
+
+    <script>
+        const stars = document.querySelectorAll('.star');
+        const modal = document.getElementById('reviewModal');
+        const submitBtn = document.getElementById('submit-btn');
+        const messageContainer = document.getElementById('message-container');
+
+        stars.forEach(star => {
+            star.addEventListener('click', onStarClick);
+        });
+
+        function onStarClick(e) {
+            const value = parseInt(e.target.dataset.value, 10);
+            updateStars(value);
+
+            if (value <= 4) {
+                showModal();
+            } else {
+                window.location.href = 'https://g.page/r/CVE-F5liNfwAEBM/review';
+            }
+        }
+
+        function updateStars(value) {
+            stars.forEach(star => {
+                star.classList.remove('rated');
+            });
+
+            for (let i = 0; i < value; i++) {
+                stars[i].classList.add('rated');
+            }
+        }
+
+        function showModal() {
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        submitBtn.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+            submitReview();
+        });
+
+        function submitReview() {
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            if (email.trim() === '' || message.trim() === '') {
+                messageContainer.innerText = 'Please fill in all fields.';
+                return;
+            }
+
+            emailjs.send("service_y0fnhel", "template_0kkxxle", {
+                user_email: email,
+                message: message
+            })
+                .then(function (response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    messageContainer.innerText = 'Thank you for your feedback!';
+                    closeModal();
+                    updateStars(0); // Reset the stars
+
+                    // Hide the form and star rating div
+                    document.getElementById('reviewModal').style.display = 'none'; // Fix the ID here
+                    console.log("Hiding star rating div...");
+                    document.getElementById('star-rating').style.display = 'none'; // Correct ID used here
+                    document.getElementById('h1').style.display = 'none'; // Fix the ID here
+                    document.getElementById('google').style.display = 'none'; // Fix the ID here
+
+
+                }, function (error) {
+                    console.error('FAILED...', error);
+                    messageContainer.innerText = 'Failed to send feedback. Please try again later.';
+                });
+        }
+
+        window.onload = closeModal;
+    </script>
+</body>
+
+</html>
